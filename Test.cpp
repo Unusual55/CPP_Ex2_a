@@ -84,16 +84,9 @@ TEST_CASE("Bad inputs")
         {
             SUBCASE("Valid position and length: full row case")
             {
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Vertical, 101));
+                CHECK_NOTHROW(notebook.read(1, 1, 0, Direction::Vertical, 101));
                 CHECK_THROWS(notebook.read(1, 1, 0, Direction::Horizontal, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Vertical, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Horizontal, 101));
-            }
-            SUBCASE("Valid position and length: full row case")
-            {
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Vertical, 101));
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Horizontal, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Vertical, 101));
+                CHECK_NOTHROW(notebook.erase(1, 1, 0, Direction::Vertical, 101));
                 CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Horizontal, 101));
             }
             SUBCASE("Valid column, valid length, but it will be out of bounds")
