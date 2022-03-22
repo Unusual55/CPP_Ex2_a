@@ -106,6 +106,10 @@ TEST_CASE("Bad inputs")
     }
 }
 
+/**
+ * This test case will check how the functions will deal with problematic scenarios.
+ */
+
 TEST_CASE("Problematic scenarios")
 {
     SUBCASE("Write in inavailable columns")
