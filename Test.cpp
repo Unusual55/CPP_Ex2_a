@@ -10,12 +10,20 @@ using ariel::Direction;
 #include "Notebook.hpp"
 #include "doctest.h"
 #include <string>
-#define MAX_LENGTH 100
+#define EMPTY_CHAR '_'
+#define REMOVED_CHAR '~'
+#define INVALID_LONG_STRING "GFDGDFGJDFGJKFDHGFDUGFDJKGFDLGJFDAAIGLHFDAGUJADFJSDABFDSFOSDJGUJFDHGFDGJFSD;LAGISFDOGFDIGHFDGJDFGFDA"
 
+/**
+ * This test case will check how the function deals with bad input.
+ * The inputs might be invalid by themselves, like negative index of a row for example,
+ * and they can also be valid inputs that together make the whole input invalid, like a word that
+ * starts in the middle of the row and end after its end.
+ */
 TEST_CASE("Bad inputs")
 {
     ariel::Notebook notebook;
-    SUBCASE("Invalid inputs")
+    SUBCASE("Invalid Numbers")
     {
         SUBCASE("negative numeric inputs")
         {
@@ -55,6 +63,9 @@ TEST_CASE("Bad inputs")
                 CHECK_THROWS(notebook.erase(1, 1, 1, Direction::Horizontal, -5));
             }
         }
+        /**
+         * This sub case check the case that the column index is positive and within the given bounds.
+         */
         SUBCASE("Invalid positive column check")
         {
             SUBCASE("Invalid column, everything else is valid")
@@ -67,21 +78,19 @@ TEST_CASE("Bad inputs")
                 CHECK_THROWS(notebook.read(1, 1, 101, Direction::Vertical, 5));
             }
         }
+        /**
+         * This sub case will check if the function throw an exception in case that the column
+         * and the length together will reach out of the given bounds.
+         */
         SUBCASE("Bounds test-> the output should be out of bounds")
         {
             SUBCASE("Valid position and length: full row case")
             {
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Vertical, 101));
+                CHECK_NOTHROW(notebook.read(1, 1, 0, Direction::Vertical, 101));
                 CHECK_THROWS(notebook.read(1, 1, 0, Direction::Horizontal, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Vertical, 101));
+                CHECK_NOTHROW(notebook.erase(1, 1, 0, Direction::Vertical, 101));
                 CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Horizontal, 101));
-            }
-            SUBCASE("Valid position and length: full row case")
-            {
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Vertical, 101));
-                CHECK_THROWS(notebook.read(1, 1, 0, Direction::Horizontal, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Vertical, 101));
-                CHECK_THROWS(notebook.erase(1, 1, 0, Direction::Horizontal, 101));
+                CHECK_THROWS(notebook.write(1,1,0,Direction::Horizontal, INVALID_LONG_STRING));
             }
             SUBCASE("Valid column, valid length, but it will be out of bounds")
             {
@@ -91,7 +100,21 @@ TEST_CASE("Bad inputs")
             }
         }
     }
+    SUBCASE("Invalid Characters -> ~"){
+        ariel::Notebook notebook;
+        CHECK_THROWS(notebook.write(1,1,0,Direction::Horizontal, "~~~~~"));
+        CHECK_THROWS(notebook.write(1,1,0,Direction::Vertical, "~~~~~"));
+        SUBCASE("Overwriting using ~ is not allowd")
+        ariel::Notebook notebook;
+        notebook.write(1,1,0,Direction::Horizontal, "hello world");
+        CHECK_THROWS(notebook.write(1,1,0,Direction::Vertical, "~~~~~~~~~~~"));
+        CHECK_NOTHROW(notebook.erase(1,1,0,Direction::Horizontal,11));
+    }
 }
+
+/**
+ * This test case will check how the functions will deal with problematic scenarios.
+ */
 
 TEST_CASE("Problematic scenarios")
 {
@@ -118,6 +141,13 @@ TEST_CASE("Problematic scenarios")
         CHECK_THROWS(notebook.write(1, 1, 8, Direction::Horizontal, "bye"));
         CHECK_THROWS(notebook.write(1, 1, 20, Direction::Horizontal, "bye"));
     }
+    SUBCASE("Overwriting an 'empty' character - '_' is allowed"){
+        ariel::Notebook notebook;
+            notebook.write(1, 6, 0, Direction::Horizontal, "hello_hello");
+            CHECK_NOTHROW(notebook.write(1,6,6,Direction::Horizontal, "^"));
+            notebook.write(1, 7, 0, Direction::Horizontal, "hello_world");
+            CHECK_NOTHROW(notebook.write(1,7,6,Direction::Vertical,"ABCD"));
+    }
     SUBCASE("Erase an erased column throw an Unnecessary exception")
     {
         ariel::Notebook notebook;
@@ -128,6 +158,12 @@ TEST_CASE("Problematic scenarios")
         CHECK_NOTHROW(notebook.erase(1, 1, 8, Direction::Horizontal, 3));
         CHECK_NOTHROW(notebook.erase(1, 1, 20, Direction::Horizontal, 3));
     }
+
+    /**
+     * This sub case check if the function can deal with "infinite" number of pages which contains "infinite"
+     * number of rows. The function should not throw an exception.
+     */
+    
     SUBCASE("Dealing with rows or pages that does not exist->they should be since there are infinite rows and pages, even if they are not defined.")
     {
         ariel::Notebook notebook;
