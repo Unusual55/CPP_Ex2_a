@@ -146,7 +146,7 @@ TEST_CASE("Problematic scenarios")
             notebook.write(1, 6, 0, Direction::Horizontal, "hello_hello");
             CHECK_NOTHROW(notebook.write(1,6,5,Direction::Horizontal, "^"));
             notebook.write(1, 7, 0, Direction::Horizontal, "hello_world");
-            CHECK_NOTHROW(notebook.write(1,7,6,Direction::Vertical,"ABCD"));
+            CHECK_NOTHROW(notebook.write(1,7,5,Direction::Vertical,"ABCD"));
     }
     SUBCASE("Erase an erased column throw an Unnecessary exception")
     {
