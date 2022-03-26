@@ -144,7 +144,7 @@ TEST_CASE("Problematic scenarios")
     SUBCASE("Overwriting an 'empty' character - '_' is allowed"){
         ariel::Notebook notebook;
             notebook.write(1, 6, 0, Direction::Horizontal, "hello_hello");
-            CHECK_NOTHROW(notebook.write(1,6,6,Direction::Horizontal, "^"));
+            CHECK_NOTHROW(notebook.write(1,6,5,Direction::Horizontal, "^"));
             notebook.write(1, 7, 0, Direction::Horizontal, "hello_world");
             CHECK_NOTHROW(notebook.write(1,7,6,Direction::Vertical,"ABCD"));
     }
